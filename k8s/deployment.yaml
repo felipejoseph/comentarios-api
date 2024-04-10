@@ -6,34 +6,56 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: api
+      app: comentarios-api
   template:
-    metadata:  
+    metadata:
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: /metrics
-        prometheus.io/port: "8080"        
+        prometheus.io/port: "8080"
       labels:
-        app: api
+        app: comentarios-api
     spec:
       containers:
-        - name: api
+        - name: comentarios-api
           image: felipejoseph/comentarios-api:{{tag}}
-          ports: 
-          - containerPort: 8080
-          env: 
-          - name: MONGODB_URI
-            value: mongodb://mongouser:mongopwd@mongodb-service:27017/admin
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MONGODB_URI
+              value: mongodb://mongouser:mongopwd@mongodb-service:27017/admin
 --- 
 apiVersion: v1
 kind: Service
 metadata:
-  name: comentarios-api
+  name: comentarios-api-service
 spec:
   selector:
     app: comentarios-api
   ports:
     - port: 80
       targetPort: 8080   
-      nodePort: 30001   
-  type: LoadBalancer
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: comentarios-api-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /api/comment/new
+            pathType: Prefix
+            backend:
+              service:
+                name: comentarios-api-service
+                port:
+                  number: 80
+          - path: /api/comment/list/{content_id}
+            pathType: Prefix
+            backend:
+              service:
+                name: comentarios-api-service
+                port:
+                  number: 80
