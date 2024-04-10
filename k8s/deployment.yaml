@@ -31,5 +31,5 @@ spec:
     app: comentarios-api
   ports:
     - port: 80
-      targetPort: 8080
+      targetPort: 8000   # Atualizado para encaminhar para a porta 8000
   type: LoadBalancer
