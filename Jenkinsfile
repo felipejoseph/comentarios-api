@@ -2,9 +2,11 @@ pipeline {
     agent any
 
     stages {
-        stage ('inicial'){
+        stage ('Build da imagem'){
             steps {
-                echo 'iniciando a pipeline'
+                script{
+                    dockerapp = dockerbuild.Build("felipejoseph/comentarios-api:${env.BUILD_ID}", '-f ./app/Dockerfile ./app')
+                }
             }
         }
             
