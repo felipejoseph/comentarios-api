@@ -1,43 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongodb
-spec:
-  selector:
-    matchLabels:
-      app: mongodb
-  template:
-    metadata:
-      labels:
-        app: mongodb
-    spec:
-      containers:
-        - name: mongodb
-          image: mongo:4.4.5
-          ports:
-            - containerPort: 27017
-          env:
-            - name: MONGO_INITDB_ROOT_USERNAME
-              value: mongouser
-            - name: MONGO_INITDB_ROOT_PASSWORD
-              value: mongopwd         
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: mongodb-service
-spec:
-  selector:
-    app: mongodb
-  ports:
-    - port: 27017
-      targetPort: 27017
-  type: ClusterIP
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: api
+  name: comentarios-api
 spec:
   replicas: 1
   selector:
@@ -54,7 +18,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: rafael9br/api-produto:{{tag}}
+          image: felipejoseph/comentarios-api:{{tag}}
           ports: 
           - containerPort: 8080
           env: 
@@ -64,10 +28,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: api-service
+  name: comentarios-api
 spec:
   selector:
-    app: api
+    app: comentarios-api
   ports:
     - port: 80
       targetPort: 8080   
