@@ -21,10 +21,7 @@ spec:
           image: felipejoseph/comentarios-api:{{tag}}
           ports:
             - containerPort: 8080
-          env:
-            - name: MONGODB_URI
-              value: mongodb://mongouser:mongopwd@mongodb-service:27017/admin
---- 
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -34,28 +31,5 @@ spec:
     app: comentarios-api
   ports:
     - port: 80
-      targetPort: 8080   
-  type: ClusterIP
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: comentarios-api-ingress
-spec:
-  rules:
-    - http:
-        paths:
-          - path: /api/comment/new
-            pathType: Prefix
-            backend:
-              service:
-                name: comentarios-api-service
-                port:
-                  number: 80
-          - path: /api/comment/list/{content_id}
-            pathType: Prefix
-            backend:
-              service:
-                name: comentarios-api-service
-                port:
-                  number: 80
+      targetPort: 8080
+  type: LoadBalancer
