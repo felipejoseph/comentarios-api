@@ -1,0 +1,50 @@
+openapi: 3.0.0
+info:
+  title: API de Comentários
+  description: API para gerenciar comentários em conteúdos
+  version: 1.0.0
+paths:
+  /api/comment/new:
+    post:
+      summary: Criar um novo comentário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                comment:
+                  type: string
+                content_id:
+                  type: string
+      responses:
+        '200':
+          description: Comentário criado com sucesso
+
+  /api/comment/list/{content_id}:
+    get:
+      summary: Listar comentários de um conteúdo
+      parameters:
+        - in: path
+          name: content_id
+          required: true
+          description: ID do conteúdo
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de comentários
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    comment:
+                      type: string
