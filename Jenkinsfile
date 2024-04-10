@@ -2,9 +2,11 @@ pipeline {
     agent any
 
     stages {
-        stage ('inicial')
-            steps{
+        stage ('inicial'){
+            steps {
                 echo 'iniciando a pipeline'
             }
+        }
+            
     }
 }
