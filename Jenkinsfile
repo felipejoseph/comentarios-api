@@ -2,23 +2,33 @@ pipeline {
     agent any
 
     stages {
-        stage ('Build da imagem'){
+        stage ('Build Image') {
             steps {
-                script{
-                    dockerapp = docker.build("felipejoseph/comentarios-api:${env.BUILD_ID}", '-f ./app/Dockerfile ./app')
-                }
+                script {
+                    dockerapp = docker.build("rafael9br/api-produto:${env.BUILD_ID}", '-f ./src/Dockerfile ./src') 
+                }                
             }
         }
-
-        stage ('Push da image'){
+        stage ('Push Image') {
             steps {
-                script{
+                script {
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
                         dockerapp.push('latest')
                         dockerapp.push("${env.BUILD_ID}")
+                    }
                 }
             }
         }
-            
+        stage ('Deploy Kubernetes') {
+            environment {
+                tag_version = "${env.BUILD_ID}"
+            }
+            steps {
+                withKubeConfig([credentialsId: 'kubeconfig']) {
+                    sh 'sed -i "s/{{tag}}/$tag_version/g" ./k8s/deployment.yaml'
+                    sh 'kubectl apply -f ./k8s/deployment.yaml'
+                }
+            }
+        }
     }
 }
